@@ -2,10 +2,12 @@ from PIL import Image
 import pytesseract
 import re
 
+translation_table = str.maketrans({'§': '5', ',': ''})
+
 def parseRange(string):
-    num = re.search(r"([\d.]+)\s*[-–]\s*([\d.]+)", string)
+    num = re.search(r"([\d.,]+)\s*[-–]\s*([\d.,]+)", string)
     if num:
-        range_ = [float(num.group(1)), float(num.group(2))]
+        range_ = [float(num.group(1).translate(translation_table)), float(num.group(2).translate(translation_table))]
         unit = string[num.end():].strip()
         return range_,unit
 
@@ -30,19 +32,23 @@ def parseRange(string):
         
         
 
-text_out = pytesseract.image_to_string(Image.open('rep2.jpg'))
-text_out = re.sub(r"(\d+\.\d+)(\d+\.\d+)", r"\1 - \2", text_out)
-tr = "MCHC% 33 32.0-36.0 g/dL"
-match = re.search(r"([\w/\-%#]+)\s+([\d.]+)\s+([\d.]+)\s*[-–]\s*([\d.]+)\s+(.*)", tr)
+text_out = pytesseract.image_to_string(Image.open('rep1_5.jpg'))
+
 
 text_out = text_out.split('\n')
+# removing every dot not inbetween 2 numbers
+text_out = [re.sub(r"(?<!\d)\.(?!\d)", '', line) for line in text_out]
+
+for y in text_out:
+    print(y)
+
 report = []
 for x in text_out:
-    match = re.search(r"([\w/\-%#\(\) ]+)\s+([\d.]+)\s+(.*)",x)
+    match = re.search(r"([a-zA-Z/_%#()\}{\- ]+)\s+([§\d.,]+)[.+_+\s+](.*)",x)
     if match:
         data = {}
         data['name'] = match.group(1)
-        data['value'] = float(match.group(2))
+        data['value'] = float(match.group(2).translate(translation_table))
         range_unit = parseRange(match.group(3).lower())
         if range_unit != None:
             data['ref_range'] = range_unit[0]
