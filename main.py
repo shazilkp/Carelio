@@ -1,10 +1,21 @@
 from fastapi import FastAPI, UploadFile, File
 from fastapi.exceptions import HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 import os
 import shutil
 from report_parser import report_parser
+
 app = FastAPI()
 
+origins = ["http://localhost:5173"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def example():
