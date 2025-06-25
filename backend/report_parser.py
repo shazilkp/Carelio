@@ -41,8 +41,8 @@ def report_parser(url):
     # removing every dot not inbetween 2 numbers
     text_out = [re.sub(r"(?<!\d)\.(?!\d)", '', line) for line in text_out]
 
-    for y in text_out:
-        print(y)
+    # for y in text_out:
+    #     print(y)
 
     report = []
     for x in text_out:

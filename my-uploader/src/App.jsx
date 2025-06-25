@@ -13,7 +13,7 @@ function App() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/upload-parse", {
+      const res = await fetch("https://careliotest.onrender.com/upload-parse", {
         method: "POST",
         body: formData,
       });
